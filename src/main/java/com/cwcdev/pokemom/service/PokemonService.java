@@ -15,4 +15,6 @@ public interface PokemonService {
     Page<PokemonResponse> searchPokemonByType(String type, Pageable pageable);
     PokemonResponse updateFavorite(Long id, FavoriteRequest request);
     void deletePokemon(Long id);
+	Page<PokemonResponse> getFavoritePokemon(Pageable pageable);
+	void evictAllCaches();
 }

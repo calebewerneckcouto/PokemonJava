@@ -1,4 +1,3 @@
-// config/RestTemplateConfig.java
 package com.cwcdev.pokemom.config;
 
 import org.springframework.context.annotation.Bean;

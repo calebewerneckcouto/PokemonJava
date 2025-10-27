@@ -1,8 +1,8 @@
-// model/dto/FavoriteRequest.java
 package com.cwcdev.pokemom.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Schema(description = "Requisição para favoritar Pokémon")
 public class FavoriteRequest {
@@ -12,6 +12,7 @@ public class FavoriteRequest {
     private Boolean favorite;
     
     @Schema(description = "Nota pessoal", example = "Muito forte!")
+    @Size(max = 500, message = "A nota deve ter no máximo 500 caracteres")
     private String note;
 
     // Constructors
