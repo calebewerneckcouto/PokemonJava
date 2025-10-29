@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,12 +50,14 @@ public class PokemonController {
     
     @Operation(
         summary = "Cachear Pokémon", 
-        description = "Busca um Pokémon na PokeAPI e salva/atualiza no banco local. Use apenas o nome OU o ID, não ambos."
+        description = "Busca um Pokémon na PokeAPI e salva/atualiza no banco local. Use apenas o nome OU o ID, não ambos. Apenas ADMIN"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Pokémon cacheado com sucesso",
                     content = @Content(schema = @Schema(implementation = PokemonResponse.class))),
         @ApiResponse(responseCode = "400", description = "Parâmetro inválido",
+                    content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - requer perfil ADMIN",
                     content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(responseCode = "404", description = "Pokémon não encontrado na PokeAPI",
                     content = @Content(schema = @Schema(hidden = true))),
@@ -62,6 +65,7 @@ public class PokemonController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping("/cache/{nameOrId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PokemonResponse> cachePokemon(
             @Parameter(description = "Nome OU ID do Pokémon (apenas um)", example = "pikachu")
             @PathVariable 
@@ -76,7 +80,7 @@ public class PokemonController {
     
     @Operation(
         summary = "Listar Pokémon", 
-        description = "Retorna lista paginada de todos os Pokémon cacheados"
+        description = "Retorna lista paginada de todos os Pokémon cacheados. Acesso público"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso",
@@ -105,7 +109,7 @@ public class PokemonController {
     
     @Operation(
         summary = "Buscar Pokémon por ID", 
-        description = "Retorna um Pokémon específico pelo ID local"
+        description = "Retorna um Pokémon específico pelo ID local. Acesso público"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Pokémon encontrado",
@@ -130,7 +134,7 @@ public class PokemonController {
     
     @Operation(
         summary = "Buscar Pokémon por ID da PokeAPI", 
-        description = "Retorna um Pokémon específico pelo ID da PokeAPI"
+        description = "Retorna um Pokémon específico pelo ID da PokeAPI. Acesso público"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Pokémon encontrado",
@@ -156,7 +160,7 @@ public class PokemonController {
     
     @Operation(
         summary = "Buscar Pokémon por nome", 
-        description = "Retorna um Pokémon específico pelo nome"
+        description = "Retorna um Pokémon específico pelo nome. Acesso público"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Pokémon encontrado",
@@ -181,7 +185,7 @@ public class PokemonController {
     
     @Operation(
         summary = "Buscar Pokémon por tipo", 
-        description = "Busca Pokémon por tipo com paginação"
+        description = "Busca Pokémon por tipo com paginação. Acesso público"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
@@ -219,15 +223,18 @@ public class PokemonController {
     
     @Operation(
         summary = "Listar Pokémon favoritos", 
-        description = "Retorna lista paginada de Pokémon favoritos"
+        description = "Retorna lista paginada de Pokémon favoritos. Acesso para USER e ADMIN"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso",
                     content = @Content(schema = @Schema(implementation = Page.class))),
         @ApiResponse(responseCode = "400", description = "Parâmetros de paginação inválidos",
+                    content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - requer autenticação",
                     content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping("/favorites")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Page<PokemonResponse>> getFavoritePokemon(
             @Parameter(description = "Número da página", example = "0")
             @RequestParam(defaultValue = "0") 
@@ -248,17 +255,20 @@ public class PokemonController {
     
     @Operation(
         summary = "Favoritar Pokémon", 
-        description = "Marca/desmarca um Pokémon como favorito e adiciona uma nota"
+        description = "Marca/desmarca um Pokémon como favorito e adiciona uma nota. Acesso para USER e ADMIN"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Pokémon atualizado com sucesso",
                     content = @Content(schema = @Schema(implementation = PokemonResponse.class))),
         @ApiResponse(responseCode = "400", description = "Dados inválidos",
                     content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - requer autenticação",
+                    content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(responseCode = "404", description = "Pokémon não encontrado",
                     content = @Content(schema = @Schema(hidden = true)))
     })
     @PatchMapping("/{id}/favorite")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PokemonResponse> updateFavorite(
             @Parameter(description = "ID local do Pokémon", example = "1")
             @PathVariable 
@@ -277,17 +287,20 @@ public class PokemonController {
     
     @Operation(
         summary = "Deletar Pokémon", 
-        description = "Remove um Pokémon do cache local"
+        description = "Remove um Pokémon do cache local. Apenas ADMIN"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Pokémon deletado com sucesso",
                     content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(responseCode = "400", description = "ID inválido",
                     content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - requer perfil ADMIN",
+                    content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(responseCode = "404", description = "Pokémon não encontrado",
                     content = @Content(schema = @Schema(hidden = true)))
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePokemon(
             @Parameter(description = "ID local do Pokémon", example = "1")
             @PathVariable 
@@ -302,13 +315,16 @@ public class PokemonController {
     
     @Operation(
         summary = "Limpar cache", 
-        description = "Limpa todos os caches da aplicação"
+        description = "Limpa todos os caches da aplicação. Apenas ADMIN"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Cache limpo com sucesso",
+                    content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - requer perfil ADMIN",
                     content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping("/cache/clear")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> clearCache() {
         pokemonService.evictAllCaches();
         return ResponseEntity.ok().build();
