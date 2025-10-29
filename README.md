@@ -1,3 +1,12 @@
+
+# Projetos Realizados em aula
+
+https://github.com/calebewerneckcouto/GerenciamentoCEP
+
+https://github.com/calebewerneckcouto/TrabalhoSuzaneADACEP
+
+
+
 # 🎮 Pokémon API
 
 API REST para gerenciamento e cache de dados de Pokémon, integrada com a PokeAPI oficial.
@@ -75,6 +84,36 @@ mvn spring-boot:run
 ```
 
 A API estará disponível em `http://localhost:8080`
+
+
+🔐 Sistema de Autenticação OAuth2
+✅ Login com usuário/senha
+
+✅ Tokens JWT com expiração
+
+✅ Refresh tokens
+
+✅ Controle de acesso por roles (USER, ADMIN)
+
+✅ Proteção de endpoints sensíveis
+
+👥 Gestão de Usuários
+✅ Registro de novos usuários
+
+✅ Perfis de acesso (USER, ADMIN)
+
+✅ Favoritos por usuário
+
+✅ Notas pessoais por usuário
+
+🔒 Endpoints Protegidos
+✅ Cache de Pokémon - Apenas ADMIN
+
+✅ Deleção de Pokémon - Apenas ADMIN
+
+✅ Gestão de favoritos - USER e ADMIN
+
+✅ Limpeza de cache - Apenas ADMIN
 
 ## ⚙️ Configuração
 
