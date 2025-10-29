@@ -15,12 +15,7 @@ public class AuthService {
 
 
 	@Autowired
-	private UserRepository userRepository;
-
-
-	
-
-	
+	private UserRepository userRepository;	
 	
 	
 	protected User authenticated() {
