@@ -1,3 +1,10 @@
+
+# Projetos Realizados em aula
+
+https://github.com/calebewerneckcouto/GerenciamentoCEP
+
+
+
 # 🎮 Pokémon API
 
 API REST para gerenciamento e cache de dados de Pokémon, integrada com a PokeAPI oficial.
